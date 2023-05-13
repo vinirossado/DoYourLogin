@@ -1,5 +1,7 @@
-package response
+package responses
 
 type CompanyResponse struct {
-	Name string `json:"name" binding:"required" example:"NameOfYourCompany"`
+	ID       uint   `json:"id"`
+	Name     string `json:"name"`
+	ApiToken string `json:"api_token"`
 }

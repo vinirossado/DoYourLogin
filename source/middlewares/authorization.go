@@ -1,4 +1,4 @@
-package middleware
+package middlewares
 
 import (
 	"doYourLogin/source/domain/enumerations"

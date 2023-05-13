@@ -1,11 +1,11 @@
-package service
+package services
 
 import (
 	"doYourLogin/source/domain/entities"
-	"doYourLogin/source/domain/exception"
-	"doYourLogin/source/domain/request"
-	"doYourLogin/source/domain/response"
-	"doYourLogin/source/repository"
+	"doYourLogin/source/domain/exceptions"
+	"doYourLogin/source/domain/requests"
+	"doYourLogin/source/domain/responses"
+	"doYourLogin/source/repositories"
 	"errors"
 	"fmt"
 
@@ -13,16 +13,16 @@ import (
 	"gorm.io/gorm"
 )
 
-func FindUsers() []response.UserResponse {
-	users, err := repository.FindUsers()
+func FindUsers() []responses.UserResponse {
+	users, err := repositories.FindUsers()
 
 	if err != nil {
-		exception.ThrowInternalServerException(
+		exceptions.ThrowInternalServerException(
 			fmt.Sprintf("Error while trying to get all users with error: %s", err),
 		)
 	}
 
-	usersResponse := []response.UserResponse{}
+	usersResponse := []responses.UserResponse{}
 
 	for _, user := range users {
 		usersResponse = append(usersResponse, *MapToUserResponse(&user))
@@ -31,23 +31,23 @@ func FindUsers() []response.UserResponse {
 	return usersResponse
 }
 
-func FindUserById(id int) *response.UserResponse {
-	user, err := repository.FindUserById(id)
+func FindUserById(id int) *responses.UserResponse {
+	user, err := repositories.FindUserById(id)
 
 	if err != nil {
-		exception.ThrowNotFoundException(fmt.Sprintf("User with %d was not found", id))
+		exceptions.ThrowNotFoundException(fmt.Sprintf("User with %d was not found", id))
 	}
 
 	return MapToUserResponse(user)
 }
 
-func CreateUser(request *request.UserRequest) {
+func CreateUser(request *requests.UserRequest) {
 
-	repository.UsingTransactional(func(tx *repository.TransactionalOperation) error {
-		exists := repository.ExistsUserByUsername(request.Username)
+	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
-			return exception.BadRequestException(
+			return exceptions.BadRequestException(
 				fmt.Sprintf("Username %s already exists", request.Username),
 			)
 		}
@@ -66,8 +66,8 @@ func CreateUser(request *request.UserRequest) {
 			Image:    request.Image,
 		}
 
-		if err := repository.CreateUser(&user, tx); err != nil {
-			return exception.InternalServerException(
+		if err := repositories.CreateUser(&user, tx); err != nil {
+			return exceptions.InternalServerException(
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
 			)
 		}
@@ -76,12 +76,12 @@ func CreateUser(request *request.UserRequest) {
 	})
 }
 
-func UpdateUser(request *request.UserRequest, id int) {
-	repository.UsingTransactional(func(tx *repository.TransactionalOperation) error {
-		user, err := repository.FindUserById(id)
+func UpdateUser(request *requests.UserRequest, id int) {
+	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+		user, err := repositories.FindUserById(id)
 
 		if err != nil {
-			return exception.NotFoundException(
+			return exceptions.NotFoundException(
 				fmt.Sprintf("User with id {%d} was not found", id),
 			)
 		}
@@ -96,8 +96,8 @@ func UpdateUser(request *request.UserRequest, id int) {
 		user.About = request.About
 		user.Image = request.Image
 
-		if err := repository.UpdateUser(user, tx); err != nil {
-			return exception.InternalServerException(
+		if err := repositories.UpdateUser(user, tx); err != nil {
+			return exceptions.InternalServerException(
 				fmt.Sprintf("Error ocurred while trying to update new user with error: %s", err))
 		}
 		return nil
@@ -105,24 +105,24 @@ func UpdateUser(request *request.UserRequest, id int) {
 }
 
 func DeleteUser(id int) {
-	repository.UsingTransactional(func(tx *repository.TransactionalOperation) error {
-		if err := repository.DeleteUser(id, tx); err != nil {
+	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+		if err := repositories.DeleteUser(id, tx); err != nil {
 
 			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return exception.NotFoundException(
+				return exceptions.NotFoundException(
 					fmt.Sprintf("User with id {%d} not found", id))
 			}
 
-			return exception.InternalServerException(
+			return exceptions.InternalServerException(
 				fmt.Sprintf("Error ocurred while trying to delete new user with error: %s", err))
 		}
 		return nil
 	})
 }
 
-func MapToUserResponse(user *entities.User) (response *response.UserResponse) {
+func MapToUserResponse(user *entities.User) (response *responses.UserResponse) {
 
-	return &response.UserResponse{
+	return &responses.UserResponse{
 		ID:       user.ID,
 		Name:     user.Name,
 		Username: user.Username,

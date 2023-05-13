@@ -1,8 +1,8 @@
-package repository
+package repositories
 
 import (
 	"doYourLogin/source/configuration"
-	"doYourLogin/source/domain/exception"
+	"doYourLogin/source/domain/exceptions"
 	"fmt"
 	"github.com/spf13/viper"
 	"log"
@@ -62,12 +62,12 @@ func UsingTransactional(fn func(*TransactionalOperation) error) {
 		return fn(&TransactionalOperation{transaction: tx})
 	})
 	if err != nil {
-		except, ok := err.(*exception.HttpException)
+		except, ok := err.(*exceptions.HttpException)
 		if ok {
 			panic(except)
 		}
 
-		panic(exception.InternalServerException(err.Error()))
+		panic(exceptions.InternalServerException(err.Error()))
 	}
 }
 

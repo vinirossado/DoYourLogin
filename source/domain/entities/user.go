@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"abrigos/source/domain/enumerations"
+	"doYourLogin/source/domain/enumerations"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -18,6 +18,10 @@ type User struct {
 	Image    string             `gorm:"column:image"`
 	Password string             `gorm:"column:password"`
 	Role     enumerations.Roles `gorm:"column:role"`
+
+	CompanyID uint `gorm:"column:company_id"`
+
+	Company Company `gorm:"foreignKey:CompanyID"`
 }
 
 func (u *User) BeforeCreate(scope *gorm.DB) (err error) {

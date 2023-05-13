@@ -1,10 +1,10 @@
-package middleware
+package middlewares
 
 import (
 	"doYourLogin/source/configuration"
 	"doYourLogin/source/domain/enumerations"
-	"doYourLogin/source/domain/request"
-	"doYourLogin/source/repository"
+	"doYourLogin/source/domain/requests"
+	"doYourLogin/source/repositories"
 	"doYourLogin/source/utils"
 	"log"
 	"time"
@@ -48,7 +48,7 @@ func JwtMiddleware() *jwt.GinJWTMiddleware {
 		Authorizator:    AutorizatorHandler,
 		Unauthorized:    UnauthorizedHandler,
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
-		// to extract token from the request.
+		// to extract token from the requests.
 		// Optional. Default value "header:Authorization".
 		// Possible values:
 		// - "header:<name>"
@@ -80,15 +80,15 @@ func JwtMiddleware() *jwt.GinJWTMiddleware {
 // @Accept       json
 // @Produce      json
 // @Param        auth  body      requests.Auth  true  "Auth Info"
-// @Success      200   {object}  middleware.LoginOK
-// @Failure      400   {object}  exception.HttpException
-// @Failure      401   {object}  middleware.LoginError
+// @Success      200   {object}  middlewares.LoginOK
+// @Failure      400   {object}  exceptions.HttpException
+// @Failure      401   {object}  middlewares.LoginError
 // @Router       /login [post]
 func LoginHandler(c *gin.Context) (interface{}, error) {
-	auth := request.Auth{}
+	auth := requests.Auth{}
 	utils.ReadRequestBody(c, &auth)
 
-	user, err := repository.FindUserByEmail(auth.Email)
+	user, err := repositories.FindUserByEmail(auth.Email)
 
 	if err != nil {
 		return nil, jwt.ErrFailedAuthentication

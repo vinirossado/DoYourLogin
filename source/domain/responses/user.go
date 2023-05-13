@@ -1,4 +1,4 @@
-package response
+package responses
 
 import (
 	"doYourLogin/source/domain/enumerations"

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"abrigos/source/routes"
+	"doYourLogin/source/repositories"
+	"doYourLogin/source/routes"
 )
 
 func main() {
-	//repository.InitDB()
+	repositories.InitDB()
 
 	route := routes.InitRouter()
 	route.Run()

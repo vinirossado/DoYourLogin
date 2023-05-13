@@ -9,6 +9,7 @@ import (
 func InitRouter() *gin.Engine {
 	router := gin.New()
 	// bindSwagger(router)
+	bindCompanyRoutes(router)
 	bindMiddlewares(router)
 	bindActuatorsRoutes(router)
 	bindUserRoutes(router)

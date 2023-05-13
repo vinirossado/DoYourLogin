@@ -1,7 +1,7 @@
 package configuration
 
 import (
-	"abrigos/internal/configuration"
+	"doYourLogin/internal/configuration"
 	"time"
 )
 
@@ -10,10 +10,10 @@ var (
 
 	//Database
 	DATABASE_DRIVER   = configuration.MakeConfig("sqlserver")
-	DATABASE_NAME     = configuration.MakeConfig("abrigo")
+	DATABASE_NAME     = configuration.MakeConfig("doyourlogin")
 	DATABASE_USERNAME = configuration.MakeConfig("sa")
-	DATABASE_PASSWORD = configuration.MakeConfig("root")
-	DATABASE_SOURCE   = configuration.MakeConfig("sqlserver://sa:root@localhost:1433?database=abrigo")
+	DATABASE_PASSWORD = configuration.MakeConfig("DoYourLoginEuOdeioReact2x")
+	DATABASE_SOURCE   = configuration.MakeConfig("sqlserver://sa:DoYourLoginEuOdeioReact2x@localhost:1433?database=doyourlogin")
 
 	//Jwt
 	JWT_SECRET_KEY   = configuration.MakeConfig("my-jwt-secret-key")

@@ -1,7 +1,7 @@
-package middleware
+package middlewares
 
 import (
-	"doYourLogin/source/domain/exception"
+	"doYourLogin/source/domain/exceptions"
 	"log"
 	"net/http"
 
@@ -9,7 +9,7 @@ import (
 )
 
 func ExceptionMiddleware(c *gin.Context, recovered interface{}) {
-	if except, ok := recovered.(*exception.HttpException); ok {
+	if except, ok := recovered.(*exceptions.HttpException); ok {
 		c.String(except.StatusCode, except.Message)
 	} else {
 		log.Printf("Exception not mapped: %s", recovered)

@@ -1,4 +1,4 @@
-package exception
+package exceptions
 
 func ThrowNotFoundException(message string) {
 	panic(NotFoundException(message))

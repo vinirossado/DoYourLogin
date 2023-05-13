@@ -1,4 +1,4 @@
-package request
+package requests
 
 type Auth struct {
 	Email    string `json:"email" binding:"required" example:"teste@gmail.com"`
