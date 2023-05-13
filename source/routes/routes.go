@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"abrigos/source/middleware"
+	"doYourLogin/source/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,5 +23,5 @@ func InitRouter() *gin.Engine {
 
 func bindMiddlewares(router *gin.Engine) {
 	router.Use(gin.Logger())
-	router.Use(gin.CustomRecovery(middleware.ExceptionMiddleware))
+	router.Use(gin.CustomRecovery(middlewares.ExceptionMiddleware))
 }

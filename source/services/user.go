@@ -1,11 +1,11 @@
 package service
 
 import (
-	"abrigos/source/domain/entities"
-	"abrigos/source/domain/exception"
-	"abrigos/source/domain/request"
-	"abrigos/source/domain/responses"
-	"abrigos/source/repository"
+	"doYourLogin/source/domain/entities"
+	"doYourLogin/source/domain/exception"
+	"doYourLogin/source/domain/request"
+	"doYourLogin/source/domain/response"
+	"doYourLogin/source/repository"
 	"errors"
 	"fmt"
 
@@ -13,16 +13,16 @@ import (
 	"gorm.io/gorm"
 )
 
-func FindUsers() []responses.UserResponse {
+func FindUsers() []response.UserResponse {
 	users, err := repository.FindUsers()
 
 	if err != nil {
 		exception.ThrowInternalServerException(
-			fmt.Sprintf("Error while trying to get all tutors with error: %s", err),
+			fmt.Sprintf("Error while trying to get all users with error: %s", err),
 		)
 	}
 
-	usersResponse := []responses.UserResponse{}
+	usersResponse := []response.UserResponse{}
 
 	for _, user := range users {
 		usersResponse = append(usersResponse, *MapToUserResponse(&user))
@@ -31,7 +31,7 @@ func FindUsers() []responses.UserResponse {
 	return usersResponse
 }
 
-func FindUserById(id int) *responses.UserResponse {
+func FindUserById(id int) *response.UserResponse {
 	user, err := repository.FindUserById(id)
 
 	if err != nil {
@@ -68,7 +68,7 @@ func CreateUser(request *request.UserRequest) {
 
 		if err := repository.CreateUser(&user, tx); err != nil {
 			return exception.InternalServerException(
-				fmt.Sprintf("Error while trying to insert new Tutor with error: %s", err),
+				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
 			)
 		}
 
@@ -120,9 +120,9 @@ func DeleteUser(id int) {
 	})
 }
 
-func MapToUserResponse(user *entities.User) (response *responses.UserResponse) {
+func MapToUserResponse(user *entities.User) (response *response.UserResponse) {
 
-	return &responses.UserResponse{
+	return &response.UserResponse{
 		ID:       user.ID,
 		Name:     user.Name,
 		Username: user.Username,

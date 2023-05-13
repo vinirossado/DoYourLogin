@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"abrigos/source/domain/entities"
+	"doYourLogin/source/domain/entities"
 
 	"gorm.io/gorm"
 )

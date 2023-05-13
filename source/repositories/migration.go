@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"abrigos/source/configuration"
-	"abrigos/source/domain/entities"
-	"abrigos/source/domain/enumerations"
+	"doYourLogin/source/configuration"
+	"doYourLogin/source/domain/entities"
+	"doYourLogin/source/domain/enumerations"
 )
 
 func AutoMigrate() {
 	db.AutoMigrate(entities.RetriveAll()...)
-	// InsertBaseUsers()
+
 }
 
 func DropAll() {
@@ -21,7 +21,8 @@ func InsertBaseUsers() {
 			Name:     "admin",
 			Username: "admin",
 			Password: "admin",
-			Role:     enumerations.ADMIN,
+			Email:    "vinirossado@gmail.com",
+			Role:     enumerations.GOD,
 		})
 	}
 }

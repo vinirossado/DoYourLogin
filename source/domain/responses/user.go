@@ -1,7 +1,7 @@
-package responses
+package response
 
 import (
-	"abrigos/source/domain/enumerations"
+	"doYourLogin/source/domain/enumerations"
 )
 
 type UserResponse struct {

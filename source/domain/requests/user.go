@@ -1,6 +1,6 @@
 package request
 
-import "abrigos/source/domain/enumerations"
+import "doYourLogin/source/domain/enumerations"
 
 type UserRequest struct {
 	Name                 string             `json:"name" binding:"required" example:"Vinicius Rossado"`

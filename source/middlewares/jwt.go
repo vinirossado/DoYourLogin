@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"abrigos/source/configuration"
-	"abrigos/source/domain/enumerations"
-	"abrigos/source/domain/request"
-	"abrigos/source/repository"
-	"abrigos/source/utils"
+	"doYourLogin/source/configuration"
+	"doYourLogin/source/domain/enumerations"
+	"doYourLogin/source/domain/request"
+	"doYourLogin/source/repository"
+	"doYourLogin/source/utils"
 	"log"
 	"time"
 

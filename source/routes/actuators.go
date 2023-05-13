@@ -1,13 +1,13 @@
 package routes
 
 import (
-	"abrigos/source/controllers"
-	"abrigos/source/middleware"
+	"doYourLogin/source/controllers"
+	"doYourLogin/source/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
 
 func bindActuatorsRoutes(router *gin.Engine) {
 	router.GET("/health", controllers.Health)
-	router.POST("/login", middleware.JwtMiddleware().LoginHandler)
+	router.POST("/login", middlewares.JwtMiddleware().LoginHandler)
 }

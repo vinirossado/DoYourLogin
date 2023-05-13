@@ -1,9 +1,10 @@
 package repository
 
 import (
-	"abrigos/source/configuration"
-	"abrigos/source/domain/exception"
+	"doYourLogin/source/configuration"
+	"doYourLogin/source/domain/exception"
 	"fmt"
+	"github.com/spf13/viper"
 	"log"
 	"math"
 
@@ -16,6 +17,7 @@ var db *gorm.DB
 
 func InitDB() {
 	var err error
+
 	db, err = gorm.Open(sqlserver.Open(configuration.DATABASE_SOURCE.ValueAsString()), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
@@ -28,11 +30,24 @@ func InitDB() {
 }
 
 func GetConnectionString() string {
+
+	viper.SetConfigFile(".env")
+	viper.SetDefault("DATABASE_SOURCE", "localhost")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Error reading config file: %s", err)
+	}
+
+	databaseSource := viper.GetString("DATABASE_SOURCE")
+	databaseUsername := viper.GetString("DATABASE_USERNAME")
+	databasePassword := viper.GetString("DATABASE_PASSWORD")
+
 	return fmt.Sprintf(
 		"%s:%s@%s",
-		configuration.DATABASE_USERNAME.ValueAsString(),
-		configuration.DATABASE_PASSWORD.ValueAsString(),
-		configuration.DATABASE_SOURCE.ValueAsString(),
+		databaseUsername,
+		databasePassword,
+		databaseSource,
 	)
 }
 

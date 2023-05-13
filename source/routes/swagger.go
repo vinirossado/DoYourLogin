@@ -1,7 +1,7 @@
 package routes
 
 // import (
-// 	_ "abrigos/source/swagger"
+// 	_ "doYourLogin/source/swagger"
 
 // 	"github.com/gin-gonic/gin"
 // 	ginSwagger "github.com/swaggo/gin-swagger"

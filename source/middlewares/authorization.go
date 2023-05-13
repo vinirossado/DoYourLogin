@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"abrigos/source/domain/enumerations"
+	"doYourLogin/source/domain/enumerations"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
