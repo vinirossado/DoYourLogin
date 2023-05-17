@@ -10,5 +10,6 @@ func bindCompanyRoutes(router *gin.Engine) {
 	company := router.Group("/company")
 
 	company.POST("", controllers.CreateCompany)
+	company.GET("", controllers.FindCompanies)
 
 }
