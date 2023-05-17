@@ -7,6 +7,7 @@ import (
 	"doYourLogin/source/domain/requests"
 	"doYourLogin/source/domain/responses"
 	"doYourLogin/source/repositories"
+	"doYourLogin/source/utils"
 	"fmt"
 )
 
@@ -52,6 +53,34 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 	return companyResponse
 }
 
+func FindCompanies() []responses.CompanyResponse {
+	companies, err := repositories.FindCompanies()
+
+	if err != nil {
+		return []responses.CompanyResponse{}
+	}
+
+	companiesResponse := []responses.CompanyResponse{}
+
+	err = utils.Map(companies, companiesResponse)
+
+	if err != nil {
+		fmt.Printf("Mapping error", err)
+	}
+
+	return companiesResponse
+}
+
+func FindCompanyByID(id int) *responses.CompanyResponse {
+	company, err := repositories.FindCompanyById(id)
+
+	if err != nil {
+		exceptions.ThrowNotFoundException(fmt.Sprintf("Company with %d was not found", id))
+	}
+
+	return MapToCompanyResponse(company)
+}
+
 func CreateAPIToken() string {
 	const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -66,4 +95,12 @@ func CreateAPIToken() string {
 	}
 
 	return string(bytes)
+}
+
+func MapToCompanyResponse(company *entities.Company) (response *responses.CompanyResponse) {
+	return &responses.CompanyResponse{
+		ID:       company.ID,
+		Name:     company.Name,
+		ApiToken: company.APIToken,
+	}
 }

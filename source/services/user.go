@@ -42,7 +42,6 @@ func FindUserById(id int) *responses.UserResponse {
 }
 
 func CreateUser(request *requests.UserRequest) {
-
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
 		exists := repositories.ExistsUserByUsername(request.Username)
 
@@ -55,15 +54,16 @@ func CreateUser(request *requests.UserRequest) {
 		hash, _ := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 
 		user := entities.User{
-			Name:     request.Name,
-			Username: request.Username,
-			Password: string(hash),
-			Role:     request.Role,
-			Email:    request.Email,
-			Address:  request.Address,
-			Phone:    request.Phone,
-			About:    request.About,
-			Image:    request.Image,
+			Name:      request.Name,
+			Username:  request.Username,
+			Password:  string(hash),
+			Role:      request.Role,
+			Email:     request.Email,
+			Address:   request.Address,
+			Phone:     request.Phone,
+			About:     request.About,
+			Image:     request.Image,
+			CompanyID: 1,
 		}
 
 		if err := repositories.CreateUser(&user, tx); err != nil {

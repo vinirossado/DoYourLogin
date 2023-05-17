@@ -12,7 +12,7 @@ func bindUserRoutes(router *gin.Engine) {
 
 	users := router.Group("/user")
 
-	users.POST("", controllers.CreateUser)
+	users.POST("", middlewares.CheckAuthToken(), controllers.CreateUser)
 
 	users.Use(middlewares.JwtMiddleware().MiddlewareFunc())
 	users.GET("", middlewares.AuthorizationMiddleware(enumerations.NORMAL), controllers.FindUsers)

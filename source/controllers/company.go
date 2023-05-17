@@ -11,6 +11,17 @@ import (
 func CreateCompany(c *gin.Context) {
 	company := requests.CompanyRequest{}
 	utils.ReadRequestBody(c, &company)
-	company2 := services.CreateCompany(&company)
-	c.JSON(http.StatusOK, company2)
+	companyResponse := services.CreateCompany(&company)
+	c.JSON(http.StatusOK, companyResponse)
+}
+
+func FindCompanies(c *gin.Context) {
+	companies := services.FindCompanies()
+	c.JSON(http.StatusOK, companies)
+}
+
+func FindCompanyByID(c *gin.Context) {
+	id := utils.ConvertToInt(c.Params.ByName("id"))
+	company := services.FindCompanyByID(id)
+	c.JSON(http.StatusOK, company)
 }
