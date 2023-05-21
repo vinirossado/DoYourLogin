@@ -1,56 +1,48 @@
 package utils
 
 import (
-	"fmt"
 	"reflect"
 )
 
-func Map(source any, destination any) error {
-	sourceValue := reflect.ValueOf(source)
-	destValue := reflect.ValueOf(destination)
+func FindFieldByPath(t reflect.Value, fieldName string) (bool, []int) {
+	for i := 0; i < t.NumField(); i++ {
+		field := t.FieldByName(fieldName)
+		if field.IsValid() {
+			return true, nil
+		}
 
-	sourceType := sourceValue.Type()
+	}
+
+	return false, nil
+}
+
+func Map(source any, destination any) {
+	sourceValue := reflect.ValueOf(source)
+	destValue := reflect.ValueOf(destination).Elem()
+
 	destType := destValue.Type()
 
-	if sourceType.Kind() == reflect.Slice && destType.Kind() == reflect.Slice {
-		if sourceType.Elem().Kind() != reflect.Struct || destType.Elem().Kind() != reflect.Struct {
-			return fmt.Errorf("slice elements must be structs")
-		}
+	var maxIndex = 0
 
-		for i := 0; i < sourceValue.Len(); i++ {
-			sourceElem := sourceValue.Index(i)
-			destElem := reflect.New(destType.Elem()).Elem()
-
-			err := Map(sourceElem.Interface(), destElem.Interface())
-
-			if err != nil {
-				return err
-			}
-			destValue = reflect.Append(destValue, destElem)
-		}
-
-		reflect.ValueOf(destination).Elem().Set(destValue)
-	} else if sourceType.Kind() == reflect.Struct && destType.Kind() == reflect.Struct {
-		if sourceType != destType {
-			return fmt.Errorf("source and destination must have the same type")
-		}
-
-		for i := 0; i < sourceType.NumField(); i++ {
-			sourceField := sourceType.Field(i)
-			sourceFieldValue := sourceValue.Field(i)
-
-			destField, found := destType.FieldByName(sourceField.Name)
-			if found {
-				destFieldValue := destValue.FieldByName(destField.Name)
-				if destFieldValue.CanSet() && sourceFieldValue.Type() == destFieldValue.Type() {
-					destFieldValue.Set(sourceFieldValue)
-				}
-			}
-
-		}
-
+	if destValue.NumField() > sourceValue.NumField() {
+		maxIndex = sourceValue.NumField()
 	} else {
-		return fmt.Errorf("Source and Destination must either be both structs or both slices")
+		maxIndex = destValue.NumField()
 	}
-	return nil
+
+	for i := 0; i < maxIndex; i++ {
+		destField := destValue.Field(i)
+		destFieldName := destType.Field(i).Name
+
+		// Find corresponding source field by name
+		sourceField := sourceValue.FieldByName(destFieldName)
+		if !sourceField.IsValid() {
+			continue
+		}
+
+		// Perform mapping from source to destination
+		if destField.CanSet() && sourceField.IsValid() && destField.Type() == sourceField.Type() {
+			destField.Set(sourceField)
+		}
+	}
 }

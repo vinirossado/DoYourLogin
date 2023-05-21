@@ -9,5 +9,7 @@ func main() {
 	repositories.InitDB()
 
 	route := routes.InitRouter()
+
 	route.Run()
+
 }
