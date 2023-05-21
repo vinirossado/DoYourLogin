@@ -4,18 +4,6 @@ import (
 	"reflect"
 )
 
-func FindFieldByPath(t reflect.Value, fieldName string) (bool, []int) {
-	for i := 0; i < t.NumField(); i++ {
-		field := t.FieldByName(fieldName)
-		if field.IsValid() {
-			return true, nil
-		}
-
-	}
-
-	return false, nil
-}
-
 func Map(source any, destination any) {
 	sourceValue := reflect.ValueOf(source)
 	destValue := reflect.ValueOf(destination).Elem()

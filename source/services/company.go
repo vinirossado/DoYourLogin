@@ -7,7 +7,6 @@ import (
 	"doYourLogin/source/domain/requests"
 	"doYourLogin/source/domain/responses"
 	"doYourLogin/source/repositories"
-	"doYourLogin/source/utils"
 	"fmt"
 )
 
@@ -62,10 +61,8 @@ func FindCompanies() []responses.CompanyResponse {
 
 	companiesResponse := []responses.CompanyResponse{}
 
-	err = utils.Map(companies, companiesResponse)
-
-	if err != nil {
-		fmt.Printf("Mapping error", err)
+	for _, company := range companies {
+		companiesResponse = append(companiesResponse, *MapToCompanyResponse(&company))
 	}
 
 	return companiesResponse

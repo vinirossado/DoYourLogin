@@ -4,8 +4,6 @@ import (
 	"doYourLogin/source/domain/entities"
 	"doYourLogin/source/domain/enumerations"
 	"doYourLogin/source/domain/requests"
-	"encoding/json"
-	"fmt"
 	"testing"
 )
 
@@ -21,7 +19,8 @@ type Destination struct {
 
 func TestMap(test *testing.T) {
 
-	user := entities.User{
+	user := requests.UserRequest{
+		ID:       4,
 		Name:     "ABC",
 		Username: "user1",
 		Email:    "dycjh@example.com",
@@ -33,16 +32,7 @@ func TestMap(test *testing.T) {
 		Role:     enumerations.GOD,
 	}
 
-	dto := requests.UserRequest{}
+	dto := entities.User{}
 
 	Map(user, &dto)
-
-	jsonData, err := json.Marshal(dto)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(string(jsonData))
-
 }

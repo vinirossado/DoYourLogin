@@ -3,6 +3,7 @@ package requests
 import "doYourLogin/source/domain/enumerations"
 
 type UserRequest struct {
+	ID           uint               `json:"id"`
 	Name         string             `json:"name" binding:"required" example:"Vinicius Rossado"`
 	Password     string             `json:"password" binding:"required" example:"Teste@100"`
 	Confirmation string             `json:"confirmationPassword" binding:"required" example:"Teste@100"`
