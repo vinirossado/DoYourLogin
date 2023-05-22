@@ -24,13 +24,35 @@ type User struct {
 	Company Company `gorm:"foreignKey:CompanyID"`
 }
 
-func (u *User) BeforeCreate(scope *gorm.DB) (err error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+func NewUser(name, username, email, password, address, phone, about, image string, role enumerations.Roles, companyID uint) *User {
+	passwordHashed, err := BeforeCreate(password)
 
 	if err != nil {
-		return err
+		panic(err)
 	}
 
-	scope.Table("users", "password", hash)
-	return nil
+	user := &User{
+		Name:      name,
+		Username:  username,
+		Email:     email,
+		Address:   address,
+		Phone:     phone,
+		About:     about,
+		Image:     image,
+		Password:  string(passwordHashed),
+		Role:      role,
+		CompanyID: companyID,
+	}
+
+	return user
+}
+
+func BeforeCreate(password string) (hash []byte, error error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return hash, nil
 }

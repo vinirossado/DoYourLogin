@@ -14,4 +14,5 @@ type UserRequest struct {
 	Phone        string             `json:"phone" binding:"required" example:"+372 0000-0000"`
 	About        string             `json:"about"`
 	Image        string             `json:"image"`
+	CompanyId    uint               `json:"companyId"`
 }

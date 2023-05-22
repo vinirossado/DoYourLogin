@@ -3,6 +3,7 @@ package services
 import (
 	"crypto/rand"
 	"doYourLogin/source/domain/entities"
+	"doYourLogin/source/domain/enumerations"
 	"doYourLogin/source/domain/exceptions"
 	"doYourLogin/source/domain/requests"
 	"doYourLogin/source/domain/responses"
@@ -13,8 +14,10 @@ import (
 func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 	var Id uint
 	var APIToken string
-
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+
+		tx.BeginTransaction()
+
 		exists := repositories.ExistsUserByUsername(request.Name)
 
 		if exists {
@@ -40,6 +43,10 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 
 		Id = id
 		APIToken = apiToken
+
+		newUser := entities.NewUser(request.Name, request.Username, request.Email, request.Password, "", "", "", "", enumerations.ADMIN, id)
+
+		repositories.CreateUser(newUser, tx)
 
 		return nil
 	})

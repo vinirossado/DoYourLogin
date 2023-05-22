@@ -43,6 +43,7 @@ func FindUserById(id int) *responses.UserResponse {
 
 func CreateUser(request *requests.UserRequest) {
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
@@ -63,7 +64,7 @@ func CreateUser(request *requests.UserRequest) {
 			Phone:     request.Phone,
 			About:     request.About,
 			Image:     request.Image,
-			CompanyID: 1,
+			CompanyID: request.CompanyId,
 		}
 
 		if err := repositories.CreateUser(&user, tx); err != nil {

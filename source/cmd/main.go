@@ -10,6 +10,8 @@ func main() {
 
 	route := routes.InitRouter()
 
+	//var _ = utils.InitEmailServer()
+
 	route.Run()
 
 }

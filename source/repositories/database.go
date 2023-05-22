@@ -57,10 +57,37 @@ type TransactionalOperation struct {
 	transaction *gorm.DB
 }
 
+func (to *TransactionalOperation) Commit() error {
+	return to.transaction.Commit().Error
+}
+
+func (to *TransactionalOperation) Rollback() error {
+	return to.transaction.Rollback().Error
+}
+
+func (to *TransactionalOperation) BeginTransaction() error {
+	return to.transaction.Begin().Error
+}
+
 func UsingTransactional(fn func(*TransactionalOperation) error) {
 	err := db.Transaction(func(tx *gorm.DB) error {
-		return fn(&TransactionalOperation{transaction: tx})
+		to := &TransactionalOperation{transaction: tx}
+		err := fn(to)
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		err = to.Commit()
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		return nil
+		//return fn(&TransactionalOperation{transaction: tx})
 	})
+
 	if err != nil {
 		except, ok := err.(*exceptions.HttpException)
 		if ok {
