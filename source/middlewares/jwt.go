@@ -26,13 +26,13 @@ type LoginError struct {
 }
 
 type Claims struct {
-	ID   uint
-	Name string
-	Role enumerations.Roles
+	ID        uint
+	Name      string
+	Role      enumerations.Roles
+	CompanyID uint
 }
 
 var identityKey = configuration.JWT_IDENTITY_KEY.ValueAsString()
-var GlobalClaims jwt.MapClaims
 
 func JwtMiddleware() *jwt.GinJWTMiddleware {
 
@@ -105,9 +105,10 @@ func LoginHandler(c *gin.Context) (interface{}, error) {
 	}
 
 	return &Claims{
-		ID:   user.ID,
-		Name: user.Name,
-		Role: user.Role,
+		ID:        user.ID,
+		Name:      user.Name,
+		Role:      user.Role,
+		CompanyID: user.CompanyID,
 	}, nil
 
 }
@@ -116,9 +117,10 @@ func PayloadHandler(data interface{}) jwt.MapClaims {
 	user := data.(*Claims)
 
 	return jwt.MapClaims{
-		identityKey: user.Name,
-		"id":        float64(user.ID),
-		"role":      int(user.Role),
+		identityKey:  user.Name,
+		"id":         float64(user.ID),
+		"role":       int(user.Role),
+		"company_id": float64(user.CompanyID),
 	}
 }
 
@@ -135,12 +137,4 @@ func UnauthorizedHandler(c *gin.Context, statusCode int, message string) {
 		StatusCode: statusCode,
 		Message:    message,
 	})
-}
-
-func ExtractClaims(c *gin.Context) *Claims {
-	GlobalClaims = jwt.ExtractClaims(c)
-	return &Claims{
-		Name: GlobalClaims[identityKey].(string),
-		Role: enumerations.Roles(GlobalClaims["role"].(float64)),
-	}
 }

@@ -85,7 +85,6 @@ func UsingTransactional(fn func(*TransactionalOperation) error) {
 			return err
 		}
 		return nil
-		//return fn(&TransactionalOperation{transaction: tx})
 	})
 
 	if err != nil {

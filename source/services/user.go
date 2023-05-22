@@ -5,6 +5,7 @@ import (
 	"doYourLogin/source/domain/exceptions"
 	"doYourLogin/source/domain/requests"
 	"doYourLogin/source/domain/responses"
+	"doYourLogin/source/middlewares"
 	"doYourLogin/source/repositories"
 	"errors"
 	"fmt"
@@ -43,7 +44,6 @@ func FindUserById(id int) *responses.UserResponse {
 
 func CreateUser(request *requests.UserRequest) {
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
-
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
@@ -64,7 +64,7 @@ func CreateUser(request *requests.UserRequest) {
 			Phone:     request.Phone,
 			About:     request.About,
 			Image:     request.Image,
-			CompanyID: request.CompanyId,
+			CompanyID: middlewares.TokenClaims.CompanyID,
 		}
 
 		if err := repositories.CreateUser(&user, tx); err != nil {

@@ -10,7 +10,6 @@ import (
 func AuthorizationMiddleware(minimumRole enumerations.Roles) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		claims := ExtractClaims(c)
-
 		if claims.Role < minimumRole {
 			c.AbortWithStatus(http.StatusForbidden)
 		}

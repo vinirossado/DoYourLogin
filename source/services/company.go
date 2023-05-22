@@ -12,49 +12,45 @@ import (
 )
 
 func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
-	var Id uint
-	var APIToken string
-	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+	var companyID uint
+	var apiToken string
 
+	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
 		tx.BeginTransaction()
 
-		exists := repositories.ExistsUserByUsername(request.Name)
-
-		if exists {
-			return exceptions.BadRequestException(
-				fmt.Sprintf("Company %s already exists", request.Name),
-			)
+		if repositories.ExistsUserByUsername(request.Name) {
+			return fmt.Errorf("Company %s already exists", request.Name)
 		}
 
-		apiToken := CreateAPIToken()
+		apiToken, err := CreateAPIToken()
+		if err != nil {
+			return fmt.Errorf("Error creating API token: %s", err)
+		}
 
 		company := entities.Company{
 			Name:     request.Name,
 			APIToken: apiToken,
 		}
 
-		id, err := repositories.CreateCompany(&company, tx)
-
+		companyID, err = repositories.CreateCompany(&company, tx)
 		if err != nil {
-			return exceptions.InternalServerException(
-				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
-			)
+			return fmt.Errorf("Error creating company: %s", err)
 		}
 
-		Id = id
-		APIToken = apiToken
+		newUser := entities.NewUser(request.Name, request.Username, request.Email, request.Password, "", "", "", "", enumerations.ADMIN, companyID)
 
-		newUser := entities.NewUser(request.Name, request.Username, request.Email, request.Password, "", "", "", "", enumerations.ADMIN, id)
-
-		repositories.CreateUser(newUser, tx)
+		err = repositories.CreateUser(newUser, tx)
+		if err != nil {
+			return fmt.Errorf("Error creating user: %s", err)
+		}
 
 		return nil
 	})
 
 	companyResponse := responses.CompanyResponse{
-		ID:       Id,
+		ID:       companyID,
 		Name:     request.Name,
-		ApiToken: APIToken,
+		ApiToken: apiToken,
 	}
 	return companyResponse
 }
@@ -85,20 +81,20 @@ func FindCompanyByID(id int) *responses.CompanyResponse {
 	return MapToCompanyResponse(company)
 }
 
-func CreateAPIToken() string {
+func CreateAPIToken() (string, error) {
 	const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 	bytes := make([]byte, 10)
 
 	if _, err := rand.Read(bytes); err != nil {
-		return ""
+		return "", err
 	}
 
 	for i, b := range bytes {
 		bytes[i] = chars[b%byte(len(chars))]
 	}
 
-	return string(bytes)
+	return string(bytes), nil
 }
 
 func MapToCompanyResponse(company *entities.Company) (response *responses.CompanyResponse) {
