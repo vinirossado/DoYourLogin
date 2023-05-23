@@ -5,7 +5,7 @@ import (
 )
 
 func Map(source any, destination any) {
-	sourceValue := reflect.ValueOf(source)
+	sourceValue := reflect.ValueOf(source).Elem()
 	destValue := reflect.ValueOf(destination).Elem()
 
 	destType := destValue.Type()

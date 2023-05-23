@@ -24,6 +24,7 @@ func ExtractClaims(c *gin.Context) *Claims {
 
 	ctx := context.WithValue(c.Request.Context(), ClaimsKey, claims)
 	c.Request = c.Request.WithContext(ctx)
+
 	GetClaimsFromContext(c)
 
 	return claims

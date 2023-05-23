@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"doYourLogin/source/configuration"
-	"doYourLogin/source/domain/exceptions"
 	"fmt"
 	"github.com/spf13/viper"
 	"log"
@@ -70,40 +69,44 @@ func (to *TransactionalOperation) BeginTransaction() error {
 }
 
 func UsingTransactional(fn func(*TransactionalOperation) error) {
-	err := db.Transaction(func(tx *gorm.DB) error {
-		to := &TransactionalOperation{transaction: tx}
-		err := fn(to)
 
-		if err != nil {
+	tx := db.Begin()
+
+	to := &TransactionalOperation{transaction: tx}
+
+	defer func() {
+		if r := recover(); r != nil {
 			tx.Rollback()
-			return err
-		}
-
-		err = to.Commit()
-		if err != nil {
+			panic(r)
+		} else if err := recover(); err != nil {
 			tx.Rollback()
-			return err
+			panic(err)
+		} else if err := fn(to); err != nil {
+			tx.Rollback()
+			panic(err)
+		} else if err := to.Commit(); err != nil {
+			tx.Rollback()
+			panic(err)
+		} else {
+			tx.Commit()
 		}
-		return nil
-	})
-
-	if err != nil {
-		except, ok := err.(*exceptions.HttpException)
-		if ok {
-			panic(except)
-		}
-
-		panic(exceptions.InternalServerException(err.Error()))
-	}
+	}()
 }
 
 func WithTransaction(tx []*TransactionalOperation) *gorm.DB {
-	for idx, t := range tx {
+	//for idx, t := range tx {
+	//	if t != nil {
+	//		return tx[idx].transaction
+	//	}
+	//}
+	//
+	//return db
+
+	for _, t := range tx {
 		if t != nil {
-			return tx[idx].transaction
+			return t.transaction
 		}
 	}
-
 	return db
 }
 

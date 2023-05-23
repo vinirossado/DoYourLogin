@@ -7,6 +7,7 @@ import (
 	"doYourLogin/source/domain/responses"
 	"doYourLogin/source/middlewares"
 	"doYourLogin/source/repositories"
+	"doYourLogin/source/utils"
 	"errors"
 	"fmt"
 
@@ -44,35 +45,30 @@ func FindUserById(id int) *responses.UserResponse {
 
 func CreateUser(request *requests.UserRequest) {
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+		tx.BeginTransaction()
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
+			//tx.Rollback()
 			return exceptions.BadRequestException(
 				fmt.Sprintf("Username %s already exists", request.Username),
 			)
 		}
 
 		hash, _ := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+		request.CompanyID = middlewares.TokenClaims.CompanyID
+		request.Password = string(hash)
 
-		user := entities.User{
-			Name:      request.Name,
-			Username:  request.Username,
-			Password:  string(hash),
-			Role:      request.Role,
-			Email:     request.Email,
-			Address:   request.Address,
-			Phone:     request.Phone,
-			About:     request.About,
-			Image:     request.Image,
-			CompanyID: middlewares.TokenClaims.CompanyID,
-		}
+		user := entities.User{}
+
+		utils.Map(request, &user)
 
 		if err := repositories.CreateUser(&user, tx); err != nil {
+			//tx.Rollback()
 			return exceptions.InternalServerException(
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
 			)
 		}
-
 		return nil
 	})
 }
