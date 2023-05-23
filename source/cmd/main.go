@@ -12,6 +12,9 @@ func main() {
 
 	//var _ = utils.InitEmailServer()
 
-	route.Run()
+	err := route.Run()
+	if err != nil {
+		return
+	}
 
 }
