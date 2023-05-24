@@ -23,15 +23,13 @@ func FindUserById(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	user := requests.UserRequest{}
 	utils.ReadRequestBody(c, &user)
-
 	services.CreateUser(&user)
 	c.Status(http.StatusOK)
 }
 
 func UpdateUser(c *gin.Context) {
-	updateUserRequest := requests.UserRequest{}
+	updateUserRequest := requests.UserUpdateRequest{}
 	utils.ReadRequestBody(c, &updateUserRequest)
-
 	id := utils.ConvertToInt(c.Params.ByName("id"))
 	services.UpdateUser(&updateUserRequest, id)
 	c.Status(http.StatusOK)

@@ -36,11 +36,19 @@ func FindUsers() []responses.UserResponse {
 func FindUserById(id int) *responses.UserResponse {
 	user, err := repositories.FindUserById(id)
 
+	if user.CompanyID != middlewares.TokenClaims.CompanyID {
+		exceptions.ThrowBadRequestException(fmt.Sprintf("User with id %d does not belong to your company.", id))
+	}
+
 	if err != nil {
 		exceptions.ThrowNotFoundException(fmt.Sprintf("User with %d was not found", id))
 	}
 
-	return MapToUserResponse(user)
+	userResponse := &responses.UserResponse{}
+
+	utils.Map(user, userResponse)
+
+	return userResponse
 }
 
 func CreateUser(request *requests.UserRequest) {
@@ -52,7 +60,6 @@ func CreateUser(request *requests.UserRequest) {
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
-			//tx.Rollback()
 			return exceptions.BadRequestException(
 				fmt.Sprintf("Username %s already exists", request.Username),
 			)
@@ -67,7 +74,6 @@ func CreateUser(request *requests.UserRequest) {
 		utils.Map(request, &user)
 
 		if err := repositories.CreateUser(&user, tx); err != nil {
-			//tx.Rollback()
 			return exceptions.InternalServerException(
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
 			)
@@ -76,7 +82,7 @@ func CreateUser(request *requests.UserRequest) {
 	})
 }
 
-func UpdateUser(request *requests.UserRequest, id int) {
+func UpdateUser(request *requests.UserUpdateRequest, id int) {
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
 		user, err := repositories.FindUserById(id)
 
@@ -86,15 +92,7 @@ func UpdateUser(request *requests.UserRequest, id int) {
 			)
 		}
 
-		user.Name = request.Name
-		user.Username = request.Username
-		user.Password = request.Password
-		user.Role = request.Role
-		user.Email = request.Email
-		user.Address = request.Address
-		user.Phone = request.Phone
-		user.About = request.About
-		user.Image = request.Image
+		utils.Map(request, user)
 
 		if err := repositories.UpdateUser(user, tx); err != nil {
 			return exceptions.InternalServerException(
@@ -121,12 +119,10 @@ func DeleteUser(id int) {
 }
 
 func MapToUserResponse(user *entities.User) (response *responses.UserResponse) {
-
 	return &responses.UserResponse{
 		ID:       user.ID,
 		Name:     user.Name,
 		Username: user.Username,
-		Role:     user.Role,
 		Email:    user.Email,
 		Address:  user.Address,
 		Phone:    user.Phone,

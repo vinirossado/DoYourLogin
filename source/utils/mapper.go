@@ -4,10 +4,30 @@ import (
 	"reflect"
 )
 
-func Map(source any, destination any) {
+func Map(source, destination any) {
 	sourceValue := reflect.ValueOf(source).Elem()
 	destValue := reflect.ValueOf(destination).Elem()
 
+	sourceType := sourceValue.Type()
+	destType := destValue.Type()
+
+	if sourceType.Kind() != destType.Kind() {
+		panic("Source and destination must be the same type (struct or slice)")
+	}
+
+	switch sourceType.Kind() {
+	case reflect.Struct:
+		MapStruct(sourceValue, destValue)
+	case reflect.Slice:
+		MapSlice(sourceValue, destValue)
+	default:
+		panic("Source and destination must be either struct or slice")
+	}
+}
+
+func MapStruct(sourceValue, destValue reflect.Value) {
+	//sourceValue := reflect.ValueOf(source).Elem()
+	//destValue := reflect.ValueOf(destination).Elem()
 	destType := destValue.Type()
 
 	var maxIndex = 0
@@ -33,4 +53,20 @@ func Map(source any, destination any) {
 			destField.Set(sourceField)
 		}
 	}
+}
+
+func MapSlice(sourceValue, destValue reflect.Value) {
+
+	destType := destValue.Type()
+	destSlice := reflect.MakeSlice(destType, sourceValue.Len(), sourceValue.Len())
+
+	for i := 0; i < sourceValue.Len(); i++ {
+		sourceElem := sourceValue.Index(i)
+
+		if i < destValue.Len() && sourceElem.IsValid() {
+			destValue.Index(i).Set(sourceElem)
+		}
+	}
+
+	destValue.Set(destSlice)
 }

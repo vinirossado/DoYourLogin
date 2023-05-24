@@ -37,9 +37,3 @@ func FindMyCompany(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
-
-/*
-	statusCode
-	data:
-
-*/
