@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"doYourLogin/source/domain/requests"
+	"doYourLogin/source/domain/responses"
 	"doYourLogin/source/services"
 	"doYourLogin/source/utils"
 	"github.com/gin-gonic/gin"
@@ -17,11 +18,28 @@ func CreateCompany(c *gin.Context) {
 
 func FindCompanies(c *gin.Context) {
 	companies := services.FindCompanies()
-	c.JSON(http.StatusOK, companies)
+
+	response := responses.Response{
+		StatusCode: http.StatusOK,
+		Data:       companies,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
-func FindCompanyByID(c *gin.Context) {
-	id := utils.ConvertToInt(c.Params.ByName("id"))
-	company := services.FindCompanyByID(id)
-	c.JSON(http.StatusOK, company)
+func FindMyCompany(c *gin.Context) {
+	company := services.FindMyCompany()
+
+	response := responses.Response{
+		StatusCode: http.StatusOK,
+		Data:       company,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
+
+/*
+	statusCode
+	data:
+
+*/

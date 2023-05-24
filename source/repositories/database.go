@@ -94,14 +94,6 @@ func UsingTransactional(fn func(*TransactionalOperation) error) {
 }
 
 func WithTransaction(tx []*TransactionalOperation) *gorm.DB {
-	//for idx, t := range tx {
-	//	if t != nil {
-	//		return tx[idx].transaction
-	//	}
-	//}
-	//
-	//return db
-
 	for _, t := range tx {
 		if t != nil {
 			return t.transaction

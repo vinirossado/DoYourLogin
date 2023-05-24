@@ -7,12 +7,12 @@ func CreateCompany(company *entities.Company, tx ...*TransactionalOperation) (ui
 	return company.ID, err
 }
 
-func FindCompanyById(id int, tx ...*TransactionalOperation) (*entities.Company, error) {
+func FindCompanyById(id uint, tx ...*TransactionalOperation) (*entities.Company, error) {
 	company := &entities.Company{}
 	return company, WithTransaction(tx).Where("id =?", id).First(company).Error
 }
 
 func FindCompanies(tx ...*TransactionalOperation) ([]entities.Company, error) {
-	companies := []entities.Company{}
+	var companies []entities.Company
 	return companies, WithTransaction(tx).Find(&companies).Error
 }

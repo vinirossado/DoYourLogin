@@ -7,7 +7,7 @@ import (
 )
 
 func FindUsers(tx ...*TransactionalOperation) ([]entities.User, error) {
-	users := []entities.User{}
+	var users []entities.User
 	return users, WithTransaction(tx).Find(&users).Error
 }
 

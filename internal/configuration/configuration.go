@@ -7,19 +7,19 @@ import (
 	"time"
 )
 
-type config struct {
+type Config struct {
 	value string
 }
 
-func MakeConfig(value string) *config {
-	return &config{value: value}
+func MakeConfig(value string) *Config {
+	return &Config{value: value}
 }
 
-func (cfg *config) SetValue(value string) {
+func (cfg *Config) SetValue(value string) {
 	cfg.value = value
 }
 
-func (cfg *config) UpdateValueFromEnv(envname string) {
+func (cfg *Config) UpdateValueFromEnv(envname string) {
 	val, exists := os.LookupEnv(envname)
 	if !exists {
 		log.Panicf("%s is not set", envname)
@@ -27,15 +27,15 @@ func (cfg *config) UpdateValueFromEnv(envname string) {
 	cfg.value = val
 }
 
-func (cfg *config) ValueAsString() string {
+func (cfg *Config) ValueAsString() string {
 	return cfg.value
 }
 
-func (cfg *config) ValueAsByte() []byte {
+func (cfg *Config) ValueAsByte() []byte {
 	return []byte(cfg.value)
 }
 
-func (cfg *config) ValueAsFloat() float64 {
+func (cfg *Config) ValueAsFloat() float64 {
 	val, err := strconv.ParseFloat(cfg.value, 64)
 	if err != nil {
 		log.Panicf("'%s' is not a valid float64 type", cfg.value)
@@ -44,7 +44,7 @@ func (cfg *config) ValueAsFloat() float64 {
 	return val
 }
 
-func (cfg *config) ValueAsInt() int {
+func (cfg *Config) ValueAsInt() int {
 	val, err := strconv.Atoi(cfg.value)
 	if err != nil {
 		log.Panicf("'%s' is not a valid int type", cfg.value)
@@ -53,7 +53,7 @@ func (cfg *config) ValueAsInt() int {
 	return val
 }
 
-func (cfg *config) ValueAsBool() bool {
+func (cfg *Config) ValueAsBool() bool {
 	val, err := strconv.ParseBool(cfg.value)
 	if err != nil {
 		log.Panicf("'%s' is not a valid bool type", cfg.value)
@@ -62,7 +62,7 @@ func (cfg *config) ValueAsBool() bool {
 	return val
 }
 
-func (cfg *config) ValueAsDuration() time.Duration {
+func (cfg *Config) ValueAsDuration() time.Duration {
 	val, err := strconv.ParseInt(cfg.value, 10, 64)
 	if err == nil {
 		log.Panicf("'%s' is not a valid duration type", cfg.value)

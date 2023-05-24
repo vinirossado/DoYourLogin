@@ -24,7 +24,7 @@ func FindUsers() []responses.UserResponse {
 		)
 	}
 
-	usersResponse := []responses.UserResponse{}
+	var usersResponse []responses.UserResponse
 
 	for _, user := range users {
 		usersResponse = append(usersResponse, *MapToUserResponse(&user))
@@ -45,7 +45,10 @@ func FindUserById(id int) *responses.UserResponse {
 
 func CreateUser(request *requests.UserRequest) {
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
-		tx.BeginTransaction()
+		err := tx.BeginTransaction()
+		if err != nil {
+			return err
+		}
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {

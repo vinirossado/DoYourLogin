@@ -7,7 +7,10 @@ import (
 )
 
 func AutoMigrate() {
-	db.AutoMigrate(entities.RetriveAll()...)
+	err := db.AutoMigrate(entities.RetriveAll()...)
+	if err != nil {
+		return
+	}
 
 }
 
@@ -17,12 +20,15 @@ func DropAll() {
 
 func InsertBaseUsers() {
 	if configuration.APPLICATION_ENVIRONMENT.ValueAsString() == "dev" {
-		CreateUser(&entities.User{
+		err := CreateUser(&entities.User{
 			Name:     "admin",
 			Username: "admin",
 			Password: "admin",
 			Email:    "vinirossado@gmail.com",
 			Role:     enumerations.GOD,
 		})
+		if err != nil {
+			return
+		}
 	}
 }

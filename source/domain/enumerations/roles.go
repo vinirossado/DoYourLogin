@@ -3,10 +3,10 @@ package enumerations
 type Roles int
 
 const (
-	GOD Roles = iota
-	ADMIN
-	SUPERVISOR
-	NORMAL
+	NORMAL     = 10
+	SUPERVISOR = 20
+	ADMIN      = 30
+	GOD        = 90
 )
 
 func (e *Roles) Scan() error {

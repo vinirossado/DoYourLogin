@@ -73,7 +73,7 @@ func JwtMiddleware() *jwt.GinJWTMiddleware {
 	return authMiddleware
 }
 
-// Login godoc
+// LoginHandler Login godoc
 // @Summary      Login
 // @Description  Login and generate jwt auth
 // @Tags         Auth

@@ -7,7 +7,9 @@ import (
 	"doYourLogin/source/domain/exceptions"
 	"doYourLogin/source/domain/requests"
 	"doYourLogin/source/domain/responses"
+	"doYourLogin/source/middlewares"
 	"doYourLogin/source/repositories"
+	"doYourLogin/source/utils"
 	"fmt"
 )
 
@@ -16,15 +18,18 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 	var apiToken string
 
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
-		tx.BeginTransaction()
+		err := tx.BeginTransaction()
+		if err != nil {
+			return err
+		}
 
 		if repositories.ExistsUserByUsername(request.Name) {
-			return fmt.Errorf("Company %s already exists", request.Name)
+			return fmt.Errorf("company %s already exists", request.Name)
 		}
 
 		apiToken, err := CreateAPIToken()
 		if err != nil {
-			return fmt.Errorf("Error creating API token: %s", err)
+			return fmt.Errorf("error creating API token: %s", err)
 		}
 
 		company := entities.Company{
@@ -34,14 +39,14 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 
 		companyID, err = repositories.CreateCompany(&company, tx)
 		if err != nil {
-			return fmt.Errorf("Error creating company: %s", err)
+			return fmt.Errorf("error creating company: %s", err)
 		}
 
 		newUser := entities.NewUser(request.Name, request.Username, request.Email, request.Password, "", "", "", "", enumerations.ADMIN, companyID)
 
 		err = repositories.CreateUser(newUser, tx)
 		if err != nil {
-			return fmt.Errorf("Error creating user: %s", err)
+			return fmt.Errorf("error creating user: %s", err)
 		}
 
 		return nil
@@ -50,7 +55,7 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 	companyResponse := responses.CompanyResponse{
 		ID:       companyID,
 		Name:     request.Name,
-		ApiToken: apiToken,
+		APIToken: apiToken,
 	}
 	return companyResponse
 }
@@ -62,7 +67,7 @@ func FindCompanies() []responses.CompanyResponse {
 		return []responses.CompanyResponse{}
 	}
 
-	companiesResponse := []responses.CompanyResponse{}
+	var companiesResponse []responses.CompanyResponse
 
 	for _, company := range companies {
 		companiesResponse = append(companiesResponse, *MapToCompanyResponse(&company))
@@ -71,14 +76,18 @@ func FindCompanies() []responses.CompanyResponse {
 	return companiesResponse
 }
 
-func FindCompanyByID(id int) *responses.CompanyResponse {
-	company, err := repositories.FindCompanyById(id)
+func FindMyCompany() *responses.CompanyResponse {
+	companyID := middlewares.TokenClaims.CompanyID
+	company, err := repositories.FindCompanyById(companyID)
 
 	if err != nil {
-		exceptions.ThrowNotFoundException(fmt.Sprintf("Company with %d was not found", id))
+		exceptions.ThrowNotFoundException(fmt.Sprintf("Company with %d was not found", companyID))
 	}
+	var companyResponse responses.CompanyResponse
 
-	return MapToCompanyResponse(company)
+	utils.Map(company, &companyResponse)
+
+	return &companyResponse
 }
 
 func CreateAPIToken() (string, error) {
@@ -101,6 +110,6 @@ func MapToCompanyResponse(company *entities.Company) (response *responses.Compan
 	return &responses.CompanyResponse{
 		ID:       company.ID,
 		Name:     company.Name,
-		ApiToken: company.APIToken,
+		APIToken: company.APIToken,
 	}
 }

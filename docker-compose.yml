@@ -8,12 +8,12 @@ services:
     volumes:
       - sqlserver-data:/var/opt/mssql
     ports:
-      - 1433:1433
+      - "1433:1433"
   app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8025:8025
+      - "8025:8025"
 volumes:
   sqlserver-data:
