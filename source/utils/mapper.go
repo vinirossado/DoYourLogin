@@ -26,8 +26,6 @@ func Map(source, destination any) {
 }
 
 func MapStruct(sourceValue, destValue reflect.Value) {
-	//sourceValue := reflect.ValueOf(source).Elem()
-	//destValue := reflect.ValueOf(destination).Elem()
 	destType := destValue.Type()
 
 	var maxIndex = 0
@@ -56,17 +54,33 @@ func MapStruct(sourceValue, destValue reflect.Value) {
 }
 
 func MapSlice(sourceValue, destValue reflect.Value) {
-
 	destType := destValue.Type()
 	destSlice := reflect.MakeSlice(destType, sourceValue.Len(), sourceValue.Len())
 
 	for i := 0; i < sourceValue.Len(); i++ {
 		sourceElem := sourceValue.Index(i)
 
-		if i < destValue.Len() && sourceElem.IsValid() {
-			destValue.Index(i).Set(sourceElem)
+		if destValue.CanSet() && sourceElem.IsValid() {
+			destElem := reflect.New(destType.Elem()).Elem()
+			mapValues(sourceElem, destElem)
+			destSlice.Index(i).Set(destElem)
 		}
 	}
 
 	destValue.Set(destSlice)
+}
+
+func mapValues(sourceElem, destElem reflect.Value) {
+	sourceType := sourceElem.Type()
+
+	for j := 0; j < sourceType.NumField(); j++ {
+		sourceField := sourceElem.Field(j)
+		destField := destElem.Field(j)
+
+		if sourceField.IsValid() && destField.CanSet() {
+			if destField.Type() == sourceField.Type() {
+				destField.Set(sourceField)
+			}
+		}
+	}
 }
