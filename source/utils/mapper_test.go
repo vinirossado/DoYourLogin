@@ -51,4 +51,8 @@ func TestMap(test *testing.T) {
 	dto := []entities.User{}
 
 	Map(&user, &dto)
+
+	if len(dto) > 0 {
+		test.Error("Map failed")
+	}
 }

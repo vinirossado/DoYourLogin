@@ -15,7 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func FindUsers() []responses.UserResponse {
+func FindUsers() *[]responses.UserResponse {
 	users, err := repositories.FindUsers()
 
 	if err != nil {
@@ -24,13 +24,11 @@ func FindUsers() []responses.UserResponse {
 		)
 	}
 
-	var usersResponse []responses.UserResponse
+	usersResponse := []responses.UserResponse{}
 
-	for _, user := range users {
-		usersResponse = append(usersResponse, *MapToUserResponse(&user))
-	}
+	utils.Map(&users, &usersResponse)
 
-	return usersResponse
+	return &usersResponse
 }
 
 func FindUserById(id int) *responses.UserResponse {
@@ -69,11 +67,11 @@ func CreateUser(request *requests.UserRequest) {
 		request.CompanyID = middlewares.TokenClaims.CompanyID
 		request.Password = string(hash)
 
-		user := entities.User{}
+		var user = &entities.User{}
 
-		utils.Map(request, &user)
+		utils.Map(request, user)
 
-		if err := repositories.CreateUser(&user, tx); err != nil {
+		if err := repositories.CreateUser(user, tx); err != nil {
 			return exceptions.InternalServerException(
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
 			)

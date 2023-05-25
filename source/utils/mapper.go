@@ -17,15 +17,15 @@ func Map(source, destination any) {
 
 	switch sourceType.Kind() {
 	case reflect.Struct:
-		MapStruct(sourceValue, destValue)
+		mapStruct(sourceValue, destValue)
 	case reflect.Slice:
-		MapSlice(sourceValue, destValue)
+		mapSlice(sourceValue, destValue)
 	default:
 		panic("Source and destination must be either struct or slice")
 	}
 }
 
-func MapStruct(sourceValue, destValue reflect.Value) {
+func mapStruct(sourceValue, destValue reflect.Value) {
 	destType := destValue.Type()
 
 	var maxIndex = 0
@@ -53,7 +53,7 @@ func MapStruct(sourceValue, destValue reflect.Value) {
 	}
 }
 
-func MapSlice(sourceValue, destValue reflect.Value) {
+func mapSlice(sourceValue, destValue reflect.Value) {
 	destType := destValue.Type()
 	destSlice := reflect.MakeSlice(destType, sourceValue.Len(), sourceValue.Len())
 
@@ -68,19 +68,25 @@ func MapSlice(sourceValue, destValue reflect.Value) {
 	}
 
 	destValue.Set(destSlice)
+
 }
 
 func mapValues(sourceElem, destElem reflect.Value) {
 	sourceType := sourceElem.Type()
+	destType := destElem.Type()
 
 	for j := 0; j < sourceType.NumField(); j++ {
-		sourceField := sourceElem.Field(j)
-		destField := destElem.Field(j)
+		if j < destType.NumField() {
 
-		if sourceField.IsValid() && destField.CanSet() {
-			if destField.Type() == sourceField.Type() {
-				destField.Set(sourceField)
+			sourceField := sourceElem.Field(j)
+			destField := destElem.Field(j)
+
+			if sourceField.IsValid() && destField.CanSet() {
+				if destField.Type() == sourceField.Type() {
+					destField.Set(sourceField)
+				}
 			}
 		}
+
 	}
 }
