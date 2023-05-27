@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"doYourLogin/source/configuration"
 	"fmt"
-
 	"gopkg.in/gomail.v2"
 )
+
+//var EmailSenderInstance *EmailSender
 
 type EmailSender struct {
 	Host     string
@@ -15,12 +17,12 @@ type EmailSender struct {
 
 func InitEmailServer() *EmailSender {
 	sender := &EmailSender{
-		Host:     "smtp.gmail.com",
-		Port:     465,
-		Username: "vinirossado@gmail.com",
-		Password: "anpch@example.com",
+		Host:     configuration.SMTP.ValueAsString(),
+		Port:     configuration.PORT.ValueAsInt(),
+		Username: configuration.EMAIL.ValueAsString(),
+		Password: configuration.PASSWORD.ValueAsString(),
 	}
-
+	//EmailSenderInstance = sender
 	return sender
 }
 

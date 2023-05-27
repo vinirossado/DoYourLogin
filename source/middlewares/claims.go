@@ -32,5 +32,4 @@ func ExtractClaims(c *gin.Context) *Claims {
 
 func GetClaimsFromContext(c *gin.Context) {
 	TokenClaims, _ = c.Request.Context().Value(ClaimsKey).(*Claims)
-
 }

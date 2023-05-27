@@ -36,9 +36,7 @@ func CreateUser(user *entities.User, tx ...*TransactionalOperation) error {
 }
 
 func UpdateUser(user *entities.User, tx ...*TransactionalOperation) error {
-	// return WithTransaction(tx).Model(&entities.User{}).Where("id = ?", user.ID).Updates(user).Error
 	return WithTransaction(tx).Updates(&user).Error
-
 }
 
 func DeleteUser(id int, tx ...*TransactionalOperation) error {

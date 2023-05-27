@@ -21,4 +21,10 @@ var (
 	JWT_REALM        = configuration.MakeConfig("realm")
 	JWT_TIMEOUT      = configuration.MakeConfig(time.Hour.String())
 	JWT_MAX_REFRESH  = configuration.MakeConfig(time.Hour.String())
+
+	//Email
+	SMTP     = configuration.MakeConfig("smtp.gmail.com")
+	PORT     = configuration.MakeConfig("587")
+	EMAIL    = configuration.MakeConfig("vrossado1@gmail.com")
+	PASSWORD = configuration.MakeConfig("ktdfeinefggyfjrx")
 )

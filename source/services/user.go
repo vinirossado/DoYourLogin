@@ -51,10 +51,7 @@ func FindUserById(id int) *responses.UserResponse {
 
 func CreateUser(request *requests.UserRequest) {
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
-		err := tx.BeginTransaction()
-		if err != nil {
-			return err
-		}
+
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
@@ -76,6 +73,15 @@ func CreateUser(request *requests.UserRequest) {
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
 			)
 		}
+
+		es := utils.InitEmailServer()
+
+		err := es.SendEmail(user.Email, "Bando de fds", "Deles morto")
+
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 }
@@ -114,17 +120,4 @@ func DeleteUser(id int) {
 		}
 		return nil
 	})
-}
-
-func MapToUserResponse(user *entities.User) (response *responses.UserResponse) {
-	return &responses.UserResponse{
-		ID:       user.ID,
-		Name:     user.Name,
-		Username: user.Username,
-		Email:    user.Email,
-		Address:  user.Address,
-		Phone:    user.Phone,
-		About:    user.About,
-		Image:    user.Image,
-	}
 }

@@ -10,7 +10,7 @@ func main() {
 
 	route := routes.InitRouter()
 
-	//var _ = utils.InitEmailServer()
+	//_ = utils.InitEmailServer()
 
 	err := route.Run()
 	if err != nil {
