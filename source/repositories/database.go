@@ -77,7 +77,6 @@ func UsingTransactional(fn func(*TransactionalOperation) error) {
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
-			//utils.CreateLog(nil, nil)
 			panic(r)
 		} else if err := recover(); err != nil {
 			tx.Rollback()

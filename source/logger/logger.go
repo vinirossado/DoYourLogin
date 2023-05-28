@@ -1,14 +1,14 @@
-package services
+package trace_logger
 
 import (
 	"doYourLogin/source/domain/entities"
-	"doYourLogin/source/infra"
 	"doYourLogin/source/middlewares"
+	"doYourLogin/source/repositories"
 	"fmt"
 	"time"
 )
 
-func CreateLog(logger interface{}, tx *infra.TransactionalOperation) {
+func Create(logger interface{}, tx *repositories.TransactionalOperation) {
 
 	log := &entities.Logs{
 		UserID:    middlewares.TokenClaims.ID,

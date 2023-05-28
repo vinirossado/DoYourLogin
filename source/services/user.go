@@ -5,6 +5,7 @@ import (
 	"doYourLogin/source/domain/exceptions"
 	"doYourLogin/source/domain/requests"
 	"doYourLogin/source/domain/responses"
+	"doYourLogin/source/logger"
 	"doYourLogin/source/middlewares"
 	"doYourLogin/source/repositories"
 	"doYourLogin/source/utils"
@@ -55,6 +56,7 @@ func CreateUser(request *requests.UserRequest) {
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
+			trace_logger.Create(nil, tx)
 			return exceptions.BadRequestException(
 				fmt.Sprintf("Username %s already exists", request.Username),
 			)
