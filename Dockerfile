@@ -15,6 +15,21 @@ VOLUME ["/var/opt/mssql"]
 
 COPY --from=builder /app/main /app/main
 
-CMD /opt/mssql/bin/sqlservr & /app/main
 
-EXPOSE 8025 1433
+#Install MongoDB
+
+RUN apk add --no-cache mongodb
+
+RUN mkdir -p /data/db
+
+#Install Grafana
+RUN apk add --no-cache ca-certificates
+RUN wget -O /etc/apk/keys/grafana.rsa.pub https://packages.grafana.com/gpg.key
+RUN echo "https://packages.grafana.com/oss/deb stable main" | tee -a /etc/apk/repositories
+RUN apk update && apk add grafana
+
+
+EXPOSE 8025 1433 3000 27017
+
+CMD /opt/mssql/bin/sqlservr & mongod --bind_ip_all & /app/main  & grafana-server --config=/etc/grafana/grafana.ini --homepath=/usr/share/grafana
+

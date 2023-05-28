@@ -15,5 +15,19 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8025:8025"
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: SeDerErroEscreveAwait
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
 volumes:
   sqlserver-data:
+  mongodb-data:

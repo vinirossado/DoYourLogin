@@ -27,4 +27,11 @@ var (
 	PORT     = configuration.MakeConfig("587")
 	EMAIL    = configuration.MakeConfig("vrossado1@gmail.com")
 	PASSWORD = configuration.MakeConfig("ktdfeinefggyfjrx")
+
+	//Mongo
+	MONGO_CONNECTION_STRING = configuration.MakeConfig("mongodb://localhost:27017")
+	MONGO_DATABASE_NAME     = configuration.MakeConfig("Logs")
+	MONGO_COLLECTION_NAME   = configuration.MakeConfig("Logs")
+	MONGO_USER              = configuration.MakeConfig("root")
+	MONGO_PASSWORD          = configuration.MakeConfig("SeDerErroEscreveAwait")
 )
