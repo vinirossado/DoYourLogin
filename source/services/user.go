@@ -43,11 +43,11 @@ func FindUserById(id int) *responses.UserResponse {
 		exceptions.ThrowNotFoundException(fmt.Sprintf("User with %d was not found", id))
 	}
 
-	userResponse := &responses.UserResponse{}
+	userResponse := responses.UserResponse{}
 
-	utils.Map(user, userResponse)
+	utils.Map(user, &userResponse)
 
-	return userResponse
+	return &userResponse
 }
 
 func CreateUser(request *requests.UserRequest) {
@@ -66,11 +66,11 @@ func CreateUser(request *requests.UserRequest) {
 		request.CompanyID = middlewares.TokenClaims.CompanyID
 		request.Password = string(hash)
 
-		var user = &entities.User{}
+		var user = entities.User{}
 
-		utils.Map(request, user)
+		utils.Map(request, &user)
 
-		if err := repositories.CreateUser(user, tx); err != nil {
+		if err := repositories.CreateUser(&user, tx); err != nil {
 			return exceptions.InternalServerException(
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
 			)

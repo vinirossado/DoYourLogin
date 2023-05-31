@@ -31,7 +31,7 @@ func NewUser(name, username, email, password, address, phone, about, image strin
 		panic(err)
 	}
 
-	user := &User{
+	user := User{
 		Name:      name,
 		Username:  username,
 		Email:     email,
@@ -44,7 +44,7 @@ func NewUser(name, username, email, password, address, phone, about, image strin
 		CompanyID: companyID,
 	}
 
-	return user
+	return &user
 }
 
 func BeforeCreate(password string) (hash []byte, error error) {

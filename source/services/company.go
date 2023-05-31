@@ -83,6 +83,7 @@ func FindMyCompany() *responses.CompanyResponse {
 	if err != nil {
 		exceptions.ThrowNotFoundException(fmt.Sprintf("Company with %d was not found", companyID))
 	}
+
 	var companyResponse responses.CompanyResponse
 
 	utils.Map(company, &companyResponse)

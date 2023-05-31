@@ -15,19 +15,19 @@ var TokenClaims = &Claims{}
 
 func ExtractClaims(c *gin.Context) *Claims {
 	globalClaims := jwt.ExtractClaims(c)
-	claims := &Claims{
+	claims := Claims{
 		ID:        uint(globalClaims["id"].(float64)),
 		CompanyID: uint(globalClaims["company_id"].(float64)),
 		Name:      globalClaims[identityKey].(string),
 		Role:      enumerations.Roles(globalClaims["role"].(float64)),
 	}
 
-	ctx := context.WithValue(c.Request.Context(), ClaimsKey, claims)
+	ctx := context.WithValue(c.Request.Context(), ClaimsKey, &claims)
 	c.Request = c.Request.WithContext(ctx)
 
 	GetClaimsFromContext(c)
 
-	return claims
+	return &claims
 }
 
 func GetClaimsFromContext(c *gin.Context) {
