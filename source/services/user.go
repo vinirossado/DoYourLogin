@@ -11,9 +11,9 @@ import (
 	"doYourLogin/source/utils"
 	"errors"
 	"fmt"
-
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"net/http"
 )
 
 func FindUsers() *[]responses.UserResponse {
@@ -56,12 +56,12 @@ func CreateUser(request *requests.UserRequest) {
 		exists := repositories.ExistsUserByUsername(request.Username)
 
 		if exists {
-			trace_logger.Create(nil, tx)
 			return exceptions.BadRequestException(
 				fmt.Sprintf("Username %s already exists", request.Username),
 			)
 		}
 
+		trace_logger.BuildLogger(fmt.Sprintf("Username %s already exists", request.Username), "/create-user", "CreateUser", http.StatusBadRequest, tx)
 		hash, _ := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 		request.CompanyID = middlewares.TokenClaims.CompanyID
 		request.Password = string(hash)
@@ -76,9 +76,11 @@ func CreateUser(request *requests.UserRequest) {
 			)
 		}
 
+		companyDb, _ := repositories.FindCompanyById(request.CompanyID, tx)
+
 		es := utils.InitEmailServer()
 
-		err := es.SendEmail(user.Email, "Bando de fds", "Deles morto")
+		err := es.SendEmail(user.Email, "Bando de fds", fmt.Sprintf("http://localhost:8025/activate-account/%s", companyDb.APIToken))
 
 		if err != nil {
 			return err

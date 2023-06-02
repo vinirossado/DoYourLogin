@@ -4,23 +4,29 @@ import (
 	"doYourLogin/source/domain/entities"
 	"doYourLogin/source/middlewares"
 	"doYourLogin/source/repositories"
-	"fmt"
 	"time"
 )
 
-func Create(logger interface{}, tx *repositories.TransactionalOperation) {
+func insert(logger *entities.Logs, tx *repositories.TransactionalOperation) {
+	_ = repositories.CreateLog(logger, tx)
+}
 
-	log := &entities.Logs{
+func BuildLogger(message, route, source string, error uint, tx *repositories.TransactionalOperation) {
+
+	logger := entities.Logs{
 		UserID:    middlewares.TokenClaims.ID,
 		CompanyID: middlewares.TokenClaims.CompanyID,
-		Error:     "Error",
-		Message:   fmt.Sprintf("ERROR"),
-		Level:     1,
-		Route:     "/",
-		Source:    "aqui",
+		Error:     error,
+		Message:   message,
+		//Level:     level,
+		Route:     route,
+		Source:    source,
 		Timestamp: time.Now(),
 	}
-
-	_ = repositories.CreateLog(log, tx)
-
+	insert(&logger, tx)
 }
+
+//
+//func (l *entities.Logs) FlushCacheToDatabase() {}
+//
+//func handleFlowCompletion(log *Logs) {}

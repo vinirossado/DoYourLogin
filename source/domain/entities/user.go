@@ -17,6 +17,7 @@ type User struct {
 	About    string             `gorm:"column:about"`
 	Image    string             `gorm:"column:image"`
 	Password string             `gorm:"column:password"`
+	Active   bool               `gorm:"column:active"`
 	Role     enumerations.Roles `gorm:"column:role"`
 
 	CompanyID uint `gorm:"column:company_id"`

@@ -11,6 +11,7 @@ import (
 	"doYourLogin/source/repositories"
 	"doYourLogin/source/utils"
 	"fmt"
+	"time"
 )
 
 func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
@@ -33,8 +34,9 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 		}
 
 		company := entities.Company{
-			Name:     request.Name,
-			APIToken: apiToken,
+			Name:            request.Name,
+			APIToken:        apiToken,
+			ExpirationToken: time.Now().Add(time.Hour),
 		}
 
 		companyID, err = repositories.CreateCompany(&company, tx)
@@ -57,6 +59,7 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 		Name:     request.Name,
 		APIToken: apiToken,
 	}
+
 	return companyResponse
 }
 
@@ -69,9 +72,7 @@ func FindCompanies() []responses.CompanyResponse {
 
 	var companiesResponse []responses.CompanyResponse
 
-	for _, company := range companies {
-		companiesResponse = append(companiesResponse, *MapToCompanyResponse(&company))
-	}
+	utils.Map(&companies, &companiesResponse)
 
 	return companiesResponse
 }
@@ -91,6 +92,18 @@ func FindMyCompany() *responses.CompanyResponse {
 	return &companyResponse
 }
 
+func ActivateAccount(apiToken string) *responses.CompanyResponse {
+	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
+		company, _ := repositories.FindCompanyByApiToken(apiToken, tx)
+		company.Active = true
+
+		repositories.ActivateAccount(company, tx)
+
+		return nil
+	})
+	return nil
+}
+
 func CreateAPIToken() (string, error) {
 	const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -105,12 +118,4 @@ func CreateAPIToken() (string, error) {
 	}
 
 	return string(bytes), nil
-}
-
-func MapToCompanyResponse(company *entities.Company) (response *responses.CompanyResponse) {
-	return &responses.CompanyResponse{
-		ID:       company.ID,
-		Name:     company.Name,
-		APIToken: company.APIToken,
-	}
 }

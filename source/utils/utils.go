@@ -9,13 +9,11 @@ import (
 )
 
 func ReadRequestBody(c *gin.Context, requestBody interface{}) {
-
 	err := c.ShouldBindJSON(&requestBody)
 
 	if err != nil {
 		exceptions.ThrowBadRequestException(err.Error())
 	}
-
 }
 
 func ConvertToInt(stringValue string) int {
@@ -26,4 +24,8 @@ func ConvertToInt(stringValue string) int {
 	}
 
 	return valueConv
+}
+
+func ReadBodyParam(c *gin.Context, param string) string {
+	return c.Params.ByName("token")
 }

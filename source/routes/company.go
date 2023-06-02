@@ -12,6 +12,7 @@ func bindCompanyRoutes(router *gin.Engine) {
 	company := router.Group("/company")
 
 	company.POST("", controllers.CreateCompany)
+	company.GET("/activate-account/:token", controllers.ActivateAccount)
 
 	company.Use(middlewares.JwtMiddleware().MiddlewareFunc())
 	company.GET("/my-company", middlewares.AuthorizationMiddleware(enumerations.ADMIN), controllers.FindMyCompany)

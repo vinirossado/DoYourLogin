@@ -66,9 +66,7 @@ func mapSlice(sourceValue, destValue reflect.Value) {
 			destSlice.Index(i).Set(destElem)
 		}
 	}
-
 	destValue.Set(destSlice)
-
 }
 
 func mapValues(sourceElem, destElem reflect.Value) {
@@ -87,6 +85,5 @@ func mapValues(sourceElem, destElem reflect.Value) {
 				}
 			}
 		}
-
 	}
 }
