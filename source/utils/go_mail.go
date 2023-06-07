@@ -6,8 +6,6 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-//var EmailSenderInstance *EmailSender
-
 type EmailSender struct {
 	Host     string
 	Port     int
@@ -22,7 +20,6 @@ func InitEmailServer() *EmailSender {
 		Username: configuration.EMAIL.ValueAsString(),
 		Password: configuration.PASSWORD.ValueAsString(),
 	}
-	//EmailSenderInstance = sender
 	return sender
 }
 

@@ -16,7 +16,5 @@ func bindCompanyRoutes(router *gin.Engine) {
 
 	company.Use(middlewares.JwtMiddleware().MiddlewareFunc())
 	company.GET("/my-company", middlewares.AuthorizationMiddleware(enumerations.ADMIN), controllers.FindMyCompany)
-
 	company.GET("", middlewares.AuthorizationMiddleware(enumerations.GOD), controllers.FindCompanies)
-
 }
