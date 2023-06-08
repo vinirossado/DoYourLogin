@@ -10,6 +10,7 @@ import (
 	"doYourLogin/source/middlewares"
 	"doYourLogin/source/repositories"
 	"doYourLogin/source/utils"
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -64,16 +65,34 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 }
 
 func FindCompanies() []responses.CompanyResponse {
-	companies, err := repositories.FindCompanies()
+	if utils.Cache == nil {
+		fmt.Println("Cache não inicializado.")
+		return []responses.CompanyResponse{}
+	}
 
+	if entry, err := utils.Cache.Get("companies"); err == nil {
+		var companiesResponse []responses.CompanyResponse
+		err = json.Unmarshal(entry, &companiesResponse)
+		if err == nil {
+			return companiesResponse
+		}
+	}
+
+	companies, err := repositories.FindCompanies()
 	if err != nil {
 		return []responses.CompanyResponse{}
 	}
 
 	var companiesResponse []responses.CompanyResponse
-
 	utils.Map(&companies, &companiesResponse)
 
+	responseBytes, err := json.Marshal(companiesResponse)
+	if err == nil {
+		err = utils.Cache.Set("companies", responseBytes)
+		if err != nil {
+			fmt.Println("Erro ao armazenar no cache:", err)
+		}
+	}
 	return companiesResponse
 }
 
@@ -97,7 +116,7 @@ func ActivateAccount(apiToken string) *responses.CompanyResponse {
 		company, _ := repositories.FindCompanyByApiToken(apiToken, tx)
 		company.Active = true
 
-		repositories.ActivateAccount(company, tx)
+		_ = repositories.ActivateAccount(company, tx)
 
 		return nil
 	})

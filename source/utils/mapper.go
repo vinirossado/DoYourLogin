@@ -31,9 +31,9 @@ func mapStruct(sourceValue, destValue reflect.Value) {
 	var maxIndex = 0
 
 	if destValue.NumField() > sourceValue.NumField() {
-		maxIndex = sourceValue.NumField()
-	} else {
 		maxIndex = destValue.NumField()
+	} else {
+		maxIndex = sourceValue.NumField()
 	}
 
 	for i := 0; i < maxIndex; i++ {

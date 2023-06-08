@@ -2,7 +2,6 @@ package routes
 
 import (
 	"doYourLogin/source/middlewares"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,5 +23,10 @@ func InitRouter() *gin.Engine {
 
 func bindMiddlewares(router *gin.Engine) {
 	router.Use(gin.Logger())
+	//router.Use(func(c *gin.Context) {
+	//	utils.MemoryCache(c)
+	//	c.Next()
+	//})
+
 	router.Use(gin.CustomRecovery(middlewares.ExceptionMiddleware))
 }

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"crypto/rand"
 	"doYourLogin/source/domain/entities"
 	"doYourLogin/source/domain/exceptions"
 	"doYourLogin/source/domain/requests"
@@ -9,11 +10,13 @@ import (
 	"doYourLogin/source/middlewares"
 	"doYourLogin/source/repositories"
 	"doYourLogin/source/utils"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"net/http"
+	"time"
 )
 
 func FindUsers() *[]responses.UserResponse {
@@ -70,6 +73,10 @@ func CreateUser(request *requests.UserRequest) {
 
 		utils.Map(request, &user)
 
+		_ = generateRefreshToken(&user)
+
+		user.ExpiresAt = time.Now().AddDate(0, 0, 30)
+
 		if err := repositories.CreateUser(&user, tx); err != nil {
 			return exceptions.InternalServerException(
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
@@ -125,3 +132,25 @@ func DeleteUser(id int) {
 		return nil
 	})
 }
+
+func generateRefreshToken(user *entities.User) error {
+	tokenLength := 32
+
+	randomBytes := make([]byte, tokenLength)
+
+	_, err := rand.Read(randomBytes)
+
+	if err != nil {
+		return err
+	}
+
+	refreshToken := base64.URLEncoding.EncodeToString(randomBytes)
+
+	user.RefreshToken = refreshToken
+
+	return nil
+}
+
+//func refreshTokenHandler(){
+//	user := middlewares.TokenClaims.
+//}

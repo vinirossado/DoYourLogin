@@ -26,10 +26,11 @@ type LoginError struct {
 }
 
 type Claims struct {
-	ID        uint
-	Name      string
-	Role      enumerations.Roles
-	CompanyID uint
+	ID           uint
+	Name         string
+	Role         enumerations.Roles
+	CompanyID    uint
+	RefreshToken string
 }
 
 var identityKey = configuration.JWT_IDENTITY_KEY.ValueAsString()
@@ -105,10 +106,11 @@ func LoginHandler(c *gin.Context) (interface{}, error) {
 	}
 
 	return &Claims{
-		ID:        user.ID,
-		Name:      user.Name,
-		Role:      user.Role,
-		CompanyID: user.CompanyID,
+		ID:           user.ID,
+		Name:         user.Name,
+		Role:         user.Role,
+		CompanyID:    user.CompanyID,
+		RefreshToken: user.RefreshToken,
 	}, nil
 
 }
@@ -121,6 +123,7 @@ func PayloadHandler(data interface{}) jwt.MapClaims {
 		"id":         float64(user.ID),
 		"role":       int(user.Role),
 		"company_id": float64(user.CompanyID),
+		//"refresh_token": user.RefreshToken,
 	}
 }
 

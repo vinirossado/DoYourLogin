@@ -2,6 +2,7 @@ package entities
 
 import (
 	"doYourLogin/source/domain/enumerations"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -9,16 +10,18 @@ import (
 
 type User struct {
 	gorm.Model
-	Name     string             `gorm:"column:name"`
-	Username string             `gorm:"column:username;unique"`
-	Email    string             `gorm:"column:email;unique"`
-	Address  string             `gorm:"column:address"`
-	Phone    string             `gorm:"column:phone"`
-	About    string             `gorm:"column:about"`
-	Image    string             `gorm:"column:image"`
-	Password string             `gorm:"column:password"`
-	Active   bool               `gorm:"column:active"`
-	Role     enumerations.Roles `gorm:"column:role"`
+	Name         string             `gorm:"column:name"`
+	Username     string             `gorm:"column:username;unique"`
+	Email        string             `gorm:"column:email;unique"`
+	Address      string             `gorm:"column:address"`
+	Phone        string             `gorm:"column:phone"`
+	About        string             `gorm:"column:about"`
+	Image        string             `gorm:"column:image"`
+	Password     string             `gorm:"column:password"`
+	Active       bool               `gorm:"column:active"`
+	Role         enumerations.Roles `gorm:"column:role"`
+	RefreshToken string             `gorm:"column:refresh_token"`
+	ExpiresAt    time.Time          `gorm:"column:expires_at"`
 
 	CompanyID uint `gorm:"column:company_id"`
 
