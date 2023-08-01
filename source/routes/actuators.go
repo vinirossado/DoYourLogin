@@ -10,4 +10,5 @@ import (
 func bindActuatorsRoutes(router *gin.Engine) {
 	router.GET("/health", controllers.Health)
 	router.POST("/login", middlewares.JwtMiddleware().LoginHandler)
+	router.POST("/webhook", controllers.HandlePost)
 }
