@@ -6,15 +6,8 @@ COPY . .
 
 RUN go build -o main ./source/cmd/main.go
 
-# Stage 2: Final image
-FROM mcr.microsoft.com/mssql/server:2019-latest
-
-ENV ACCEPT_EULA=Y
-ENV SA_PASSWORD=DoYourLoginEuOdeioReact2x
-VOLUME ["/var/opt/mssql"]
-
 COPY --from=builder /app/main /app/main
 
-CMD /opt/mssql/bin/sqlservr & /app/main
+CMD /app/main
 
-EXPOSE 8025 1433
+EXPOSE 8025
