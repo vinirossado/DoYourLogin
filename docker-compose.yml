@@ -6,7 +6,7 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=DoYourLoginEuOdeioReact2x
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - sqlserver-2-data:/var/opt/mssql
     ports:
       - "1432:1433"
   app:
