@@ -3,17 +3,14 @@ package main
 import (
 	"doYourLogin/source/repositories"
 	"doYourLogin/source/routes"
-	cors "github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	repositories.InitDB()
-
 	route := routes.InitRouter()
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:4200"}
-	route.Use(cors.New(config))
-
+	router := gin.Default()
+	router.Run()
 	err := route.Run()
 	if err != nil {
 		return
