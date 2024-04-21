@@ -12,7 +12,7 @@ func ReadRequestBody(c *gin.Context, requestBody interface{}) {
 	err := c.ShouldBindJSON(&requestBody)
 
 	if err != nil {
-		exceptions.ThrowBadRequestException(err.Error())
+		exceptions.ThrowBadRequestException(err.Error(), nil)
 	}
 }
 
@@ -20,7 +20,7 @@ func ConvertToInt(stringValue string) int {
 	valueConv, err := strconv.Atoi(stringValue)
 
 	if err != nil {
-		exceptions.ThrowBadRequestException(fmt.Sprintf("Error converting parameter to int with error: %s", err))
+		exceptions.ThrowBadRequestException(fmt.Sprintf("Error converting parameter to int with error: %s", err), nil)
 	}
 
 	return valueConv

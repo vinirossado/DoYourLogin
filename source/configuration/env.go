@@ -13,7 +13,7 @@ var (
 	DATABASE_NAME     = configuration.MakeConfig("doyourlogin")
 	DATABASE_USERNAME = configuration.MakeConfig("sa")
 	DATABASE_PASSWORD = configuration.MakeConfig("DoYourLoginEuOdeioReact2x")
-	DATABASE_SOURCE   = configuration.MakeConfig("sqlserver://sa:DoYourLoginEuOdeioReact2x@localhost:1433?database=doyourlogin")
+	DATABASE_SOURCE   = configuration.MakeConfig("sqlserver://sa:DoYourLoginEuOdeioReact2x@localhost:1432?database=Library")
 
 	//Jwt
 	JWT_SECRET_KEY   = configuration.MakeConfig("my-jwt-secret-key")

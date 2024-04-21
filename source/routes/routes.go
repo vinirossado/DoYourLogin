@@ -13,8 +13,10 @@ func InitRouter() *gin.Engine {
 	bindMiddlewares(router)
 	bindActuatorsRoutes(router)
 	bindUserRoutes(router)
+	bindBookRoutes(router)
+	bindAuthorRoutes(router)
 
-	err := router.Run(":8025")
+	err := router.Run(":9025")
 	if err != nil {
 		panic(err)
 	}

@@ -15,7 +15,7 @@ func AutoMigrate() {
 }
 
 func DropAll() {
-	db.Migrator().DropTable(entities.RetriveAll()...)
+	db.Migrator().DropTable(entities.Book{})
 }
 
 func InsertBaseUsers() {

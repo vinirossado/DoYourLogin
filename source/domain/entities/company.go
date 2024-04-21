@@ -12,5 +12,5 @@ type Company struct {
 	Active          bool      `gorm:"column:active"`
 	ExpirationToken time.Time `gorm:"column:expirationToken"`
 
-	Users []User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	//Users []User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }

@@ -24,7 +24,7 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 			return err
 		}
 
-		if repositories.ExistsUserByUsername(request.Name) {
+		if repositories.ExistsUserByUsernameOrEmail(request.Name, request.Email) {
 			return fmt.Errorf("company %s already exists", request.Name)
 		}
 
@@ -44,7 +44,7 @@ func CreateCompany(request *requests.CompanyRequest) responses.CompanyResponse {
 			return fmt.Errorf("error creating company: %s", err)
 		}
 
-		newUser := entities.NewUser(request.Name, request.Username, request.Email, request.Password, "", "", "", "", enumerations.ADMIN, companyID)
+		newUser := entities.NewUser(request.Name, request.Username, request.Email, request.Password, "", "", "", "", enumerations.ADMIN)
 
 		err = repositories.CreateUser(newUser, tx)
 		if err != nil {
@@ -82,7 +82,7 @@ func FindMyCompany() *responses.CompanyResponse {
 	company, err := repositories.FindCompanyById(companyID)
 
 	if err != nil {
-		exceptions.ThrowNotFoundException(fmt.Sprintf("Company with %d was not found", companyID))
+		exceptions.ThrowNotFoundException(fmt.Sprintf("Company with %d was not found", companyID), nil)
 	}
 
 	var companyResponse responses.CompanyResponse

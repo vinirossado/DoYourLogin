@@ -5,5 +5,8 @@ func RetriveAll() []interface{} {
 		&Company{},
 		&User{},
 		&Logs{},
+		&Book{},
+		&Author{},
+		&Category{},
 	}
 }

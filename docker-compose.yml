@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -9,11 +9,11 @@ services:
       - sqlserver-2-data:/var/opt/mssql
     ports:
       - "1432:1433"
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8025:8025"
+  #app:
+   # build:
+    #  context: .
+     # dockerfile: Dockerfile
+    #ports:
+     # - "9025:9025"
 volumes:
   sqlserver-2-data:

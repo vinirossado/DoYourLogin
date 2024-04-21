@@ -4,6 +4,7 @@ import (
 	"doYourLogin/source/configuration"
 	"doYourLogin/source/domain/enumerations"
 	"doYourLogin/source/domain/requests"
+	"doYourLogin/source/domain/responses"
 	"doYourLogin/source/repositories"
 	"doYourLogin/source/utils"
 	"log"
@@ -15,9 +16,9 @@ import (
 )
 
 type LoginOK struct {
-	Code   int    `json:"code" example:"200"`
-	Token  string `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"`
-	Expire string `json:"expire" example:"2006-01-02T15:04:05Z07:00"`
+	StatusCode int    `json:"status_code" example:"200"`
+	Token      string `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"`
+	Expire     string `json:"expire" example:"2006-01-02T15:04:05Z07:00"`
 }
 
 type LoginError struct {
@@ -105,10 +106,9 @@ func LoginHandler(c *gin.Context) (interface{}, error) {
 	}
 
 	return &Claims{
-		ID:        user.ID,
-		Name:      user.Name,
-		Role:      user.Role,
-		CompanyID: user.CompanyID,
+		ID:   user.ID,
+		Name: user.Name,
+		Role: user.Role,
 	}, nil
 
 }
@@ -133,8 +133,10 @@ func AutorizatorHandler(data interface{}, c *gin.Context) bool {
 }
 
 func UnauthorizedHandler(c *gin.Context, statusCode int, message string) {
-	c.JSON(statusCode, LoginError{
-		StatusCode: statusCode,
-		Message:    message,
-	})
+	payload := responses.JsonResponse{
+		Error:   true,
+		Message: message,
+	}
+
+	c.JSON(statusCode, payload)
 }

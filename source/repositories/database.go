@@ -88,11 +88,18 @@ func UsingTransactional(fn func(*TransactionalOperation) error) {
 	}()
 }
 
-func WithTransaction(tx []*TransactionalOperation) *gorm.DB {
+func WithTransactions(tx []*TransactionalOperation) *gorm.DB {
 	for _, t := range tx {
 		if t != nil {
 			return t.transaction
 		}
+	}
+	return db
+}
+
+func WithTransaction(tx *TransactionalOperation) *gorm.DB {
+	if tx != nil {
+		return tx.transaction
 	}
 	return db
 }

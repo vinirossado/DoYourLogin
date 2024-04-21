@@ -5,10 +5,10 @@ import (
 )
 
 func CreateLog(log *entities.Logs, tx ...*TransactionalOperation) error {
-	return WithTransaction(tx).Create(log).Error
+	return WithTransactions(tx).Create(log).Error
 }
 
 //func FindLogByID(id uint, tx ...*TransactionalOperation) (*entities.Logs, error) {
 //	log := &entities.Logs{}
-//	return log, WithTransaction(tx).Where("id = ?", id).First(log).Error
+//	return log, WithTransactions(tx).Where("id = ?", id).First(log).Error
 //}

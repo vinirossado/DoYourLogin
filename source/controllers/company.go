@@ -18,18 +18,22 @@ func CreateCompany(c *gin.Context) {
 
 func FindCompanies(c *gin.Context) {
 	companies := services.FindCompanies()
-	response := responses.Response{
-		StatusCode: http.StatusOK,
-		Data:       companies,
+
+	response := responses.JsonResponse{
+		Message: "Companies found",
+		Error:   false,
+		Data:    companies,
 	}
+
 	c.JSON(http.StatusOK, response)
 }
 
 func FindMyCompany(c *gin.Context) {
 	company := services.FindMyCompany()
-	response := responses.Response{
-		StatusCode: http.StatusOK,
-		Data:       company,
+	response := responses.JsonResponse{
+		Message: "Companies found",
+		Error:   false,
+		Data:    company,
 	}
 	c.JSON(http.StatusOK, response)
 }

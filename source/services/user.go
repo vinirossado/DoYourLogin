@@ -22,6 +22,7 @@ func FindUsers() *[]responses.UserResponse {
 	if err != nil {
 		exceptions.ThrowInternalServerException(
 			fmt.Sprintf("Error while trying to get all users with error: %s", err),
+			nil,
 		)
 	}
 
@@ -35,12 +36,9 @@ func FindUsers() *[]responses.UserResponse {
 func FindUserById(id int) *responses.UserResponse {
 	user, err := repositories.FindUserById(id)
 
-	if user.CompanyID != middlewares.TokenClaims.CompanyID {
-		exceptions.ThrowBadRequestException(fmt.Sprintf("User with id %d does not belong to your company.", id))
-	}
-
 	if err != nil {
-		exceptions.ThrowNotFoundException(fmt.Sprintf("User with %d was not found", id))
+		exceptions.ThrowNotFoundException(fmt.Sprintf("User with %d was not found", id),
+			nil)
 	}
 
 	userResponse := responses.UserResponse{}
@@ -53,11 +51,12 @@ func FindUserById(id int) *responses.UserResponse {
 func CreateUser(request *requests.UserRequest) {
 	repositories.UsingTransactional(func(tx *repositories.TransactionalOperation) error {
 
-		exists := repositories.ExistsUserByUsername(request.Username)
+		exists := repositories.ExistsUserByUsernameOrEmail(request.Username, request.Email)
 
 		if exists {
 			return exceptions.BadRequestException(
-				fmt.Sprintf("Username %s already exists", request.Username),
+				fmt.Sprintf("Username %s or Email %s already exists", request.Username, request.Email),
+				nil,
 			)
 		}
 
@@ -73,6 +72,7 @@ func CreateUser(request *requests.UserRequest) {
 		if err := repositories.CreateUser(&user, tx); err != nil {
 			return exceptions.InternalServerException(
 				fmt.Sprintf("Error while trying to insert new User with error: %s", err),
+				nil,
 			)
 		}
 
@@ -80,7 +80,7 @@ func CreateUser(request *requests.UserRequest) {
 
 		es := utils.InitEmailServer()
 
-		err := es.SendEmail(user.Email, "Bando de fds", fmt.Sprintf("http://localhost:8025/activate-account/%s", companyDb.APIToken))
+		err := es.SendEmail(user.Email, "Bando de fds", fmt.Sprintf("http://localhost:9025/activate-account/%s", companyDb.APIToken))
 
 		if err != nil {
 			return err
@@ -97,6 +97,7 @@ func UpdateUser(request *requests.UserUpdateRequest, id int) {
 		if err != nil {
 			return exceptions.NotFoundException(
 				fmt.Sprintf("User with id {%d} was not found", id),
+				nil,
 			)
 		}
 
@@ -104,7 +105,9 @@ func UpdateUser(request *requests.UserUpdateRequest, id int) {
 
 		if err := repositories.UpdateUser(user, tx); err != nil {
 			return exceptions.InternalServerException(
-				fmt.Sprintf("Error ocurred while trying to update new user with error: %s", err))
+				fmt.Sprintf("Error ocurred while trying to update new user with error: %s", err),
+				nil,
+			)
 		}
 		return nil
 	})
@@ -116,11 +119,15 @@ func DeleteUser(id int) {
 
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return exceptions.NotFoundException(
-					fmt.Sprintf("User with id {%d} not found", id))
+					fmt.Sprintf("User with id {%d} not found", id),
+					nil,
+				)
 			}
 
 			return exceptions.InternalServerException(
-				fmt.Sprintf("Error ocurred while trying to delete new user with error: %s", err))
+				fmt.Sprintf("Error ocurred while trying to delete new user with error: %s", err),
+				nil,
+			)
 		}
 		return nil
 	})
